@@ -5,7 +5,7 @@ import {
     findWorkspacesByUserId,
     updateWorkspaceRecord,
     type WorkspaceRecord,
-} from "../respository/workspace.repository.js";
+} from "../repository/workspace.repository.js";
 import { NotFoundError } from "../types/app-error.js";
 import { CreateWorkspaceInput, UpdateWorkspaceInput } from "../validators/workspace.validator.js";
 
