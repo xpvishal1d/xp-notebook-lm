@@ -1,5 +1,7 @@
-# Created by https://www.toptal.com/developers/gitignore/api/node
-# Edit at https://www.toptal.com/developers/gitignore?templates=node
+# =============================================================================
+# Root .gitignore (global) for xp-notebook-lm
+# Covers Node, Next.js, Prisma, TypeScript, OS, editors, and AI tooling
+# =============================================================================
 
 ### Node ###
 # Logs
@@ -82,6 +84,7 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+.env*
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -136,9 +139,127 @@ dist
 # Serverless Webpack directories
 .webpack/
 
-# Optional stylelint cache
-
 # SvelteKit build / generate output
 .svelte-kit
 
-# End of https://www.toptal.com/developers/gitignore/api/node
+### Next.js ###
+# Vercel
+.vercel
+
+# Build output
+/build
+
+### Prisma ###
+# Generated Prisma client (keep schema, ignore generated output)
+/generated/prisma
+**/generated/prisma
+server/src/generated/prisma
+
+# Prisma migration lock & local cache (optional; uncomment if needed)
+# prisma/migrations/dev.db*
+
+### TypeScript ###
+next-env.d.ts
+
+### OS ###
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+### Editors / IDEs ###
+# VS Code (keep settings out of repo unless shared intentionally)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# JetBrains (IntelliJ, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+
+# Cursor / other editors
+.cursor/
+
+### AI Tooling (do NOT commit agent/assistant config & lockfiles) ###
+# Claude Code
+.claude/
+**/.claude/
+CLAUDE.md
+**/CLAUDE.md
+
+# Agents
+.agents/
+**/.agents/
+AGENTS.md
+**/AGENTS.md
+
+# Windsurf
+.windsurf/
+**/.windsurf/
+
+# Cline / Roo / other agent skills lockfiles
+skills-lock.json
+**/skills-lock.json
+
+# Continue.dev
+.continue/
+**/.continue/
+
+# GitHub Copilot
+.github/copilot/
+
+# General agent/assistant artifacts
+.agent/
+**/.agent/
+.assistant/
+**/.assistant/
+
+### Security / Secrets ###
+# Environment & secret files
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Key files
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+
+### Misc ###
+# Lockfiles for package managers are intentionally KEPT (package-lock.json, yarn.lock, pnpm-lock.yaml)
+# Uncomment the following if you do NOT want to commit lockfiles:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Docker local volumes / data
+docker-data/
+.docker/
+
+# Misc debug / temp
+*.tmp
+*.temp
+*.bak
+*.orig
