@@ -4,7 +4,7 @@ import {
     deleteMemoryForUser,
     listMemoriesForUser,
     updateMemoryForUser,
-} from "../services/memory.service.js";
+} from "../services/memory.services.js";
 import { ValidationError } from "../types/app-error.js";
 import { getZodFieldErrors } from "../utils/zod-error.js";
 import {
