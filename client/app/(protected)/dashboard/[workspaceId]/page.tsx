@@ -53,6 +53,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChatPanel } from "@/components/chat/chat-panel";
+import { ArtifactPanel } from "@/components/artifacts/artifact-panel";
+import { useUIStore, type WorkspaceTab } from "@/store/use-ui-store";
 
 const SOURCE_TYPE_META: Record<
   SourceType,
@@ -256,6 +260,10 @@ export default function WorkspaceDetailPage() {
   const [deleteWorkspaceOpen, setDeleteWorkspaceOpen] = useState(false);
   const [sourceToDelete, setSourceToDelete] = useState<Source | null>(null);
 
+  // Active tab is shared UI state (persisted across reloads).
+  const workspaceTab = useUIStore((s) => s.workspaceTab);
+  const setWorkspaceTab = useUIStore((s) => s.setWorkspaceTab);
+
   const workspace = workspaceQuery.data;
 
   return (
@@ -324,7 +332,31 @@ export default function WorkspaceDetailPage() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <Tabs
+        value={workspaceTab}
+        onValueChange={(value) => {
+          if (value) setWorkspaceTab(value as WorkspaceTab);
+        }}
+        className="flex flex-col gap-4"
+      >
+        <TabsList>
+          <TabsTrigger value="chat">Chat</TabsTrigger>
+          <TabsTrigger value="sources">Sources</TabsTrigger>
+          <TabsTrigger value="artifacts">Artifacts</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="chat">
+          <ChatPanel
+            workspaceId={workspaceId}
+            defaultModel={workspace?.defaultModel}
+          />
+        </TabsContent>
+
+        <TabsContent value="artifacts">
+          <ArtifactPanel workspaceId={workspaceId} />
+        </TabsContent>
+
+        <TabsContent value="sources" className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold tracking-tight">Sources</h2>
           <Button onClick={() => setAddOpen(true)}>
@@ -370,7 +402,8 @@ export default function WorkspaceDetailPage() {
             ))}
           </ul>
         )}
-      </div>
+        </TabsContent>
+      </Tabs>
 
       <AddSourceDialog
         workspaceId={workspaceId}

@@ -138,3 +138,85 @@ export interface ListSourcesFilters {
   type?: SourceType;
   status?: SourceStatus;
 }
+
+export type ChatRole = "USER" | "ASSISTANT";
+
+export interface Citation {
+  sourceType?: string;
+  sourceTitle?: string;
+  url?: string;
+  excerpt?: string;
+  page?: number;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  role: ChatRole;
+  content: string;
+  citations: Citation[] | null;
+  createdAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  workspaceId: string;
+  title: string | null;
+  summary: string | null;
+  summaryMessageCount: number | null;
+  summarizedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateConversationInput {
+  title?: string;
+}
+
+export type ArtifactType =
+  | "SUMMARY"
+  | "TAKEAWAYS"
+  | "FLASHCARDS"
+  | "QUIZ"
+  | "MINDMAP"
+  | "REPORT";
+
+export type ArtifactStatus = "PENDING" | "PROCESSING" | "READY" | "FAILED";
+
+export interface Artifact {
+  id: string;
+  workspaceId: string;
+  type: ArtifactType;
+  title: string;
+  content: unknown;
+  sourceIds: string[];
+  status: ArtifactStatus;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateArtifactInput {
+  type: ArtifactType;
+  title?: string;
+  sourceIds?: string[];
+}
+
+export interface AppMemory {
+  id: string;
+  memory: string;
+  createdAt: string;
+  updatedAt: string;
+  metadata?: Record<string, unknown> | null;
+  categories?: string[];
+  source: "manual" | "learned";
+}
+
+export interface CreateMemoryInput {
+  memory: string;
+  infer?: boolean;
+}
+
+export interface UpdateMemoryInput {
+  memory: string;
+}

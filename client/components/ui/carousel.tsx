@@ -95,11 +95,14 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return
+    // Publish the initial scroll state; embla only emits "select" on changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     onSelect(api)
     api.on("reInit", onSelect)
     api.on("select", onSelect)
 
     return () => {
+      api?.off("reInit", onSelect)
       api?.off("select", onSelect)
     }
   }, [api, onSelect])
