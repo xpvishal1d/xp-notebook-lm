@@ -60,9 +60,9 @@ export async function ensurePineconeIndex() {
 
     const client = getPineconeClient();
     const indexes = await client.listIndexes();
-    const exists = indexes.indexes?.some((index) => index.name === indexName);
+    const existing = indexes.indexes?.find((index) => index.name === indexName);
 
-    if (!exists) {
+    if (!existing) {
         await client.createIndex({
             name: indexName,
             dimension: EMBEDDING_DIMENSIONS,
@@ -75,6 +75,14 @@ export async function ensurePineconeIndex() {
             },
         });
         await waitForIndexReady(indexName);
+    } else if (existing.dimension !== EMBEDDING_DIMENSIONS) {
+        // Fail fast with a clear message instead of a cryptic upsert error:
+        // the index dimension is fixed at creation and cannot be changed.
+        throw new Error(
+            `Pinecone index "${indexName}" has dimension ${existing.dimension} ` +
+                `but EMBEDDING_DIMENSIONS is ${EMBEDDING_DIMENSIONS}. ` +
+                `Update EMBEDDING_DIMENSIONS to match the index, or recreate the index.`,
+        );
     }
 
     indexReady = true;
@@ -164,7 +172,7 @@ export async function deleteWorkspaceVectors(workspaceId: string) {
  * Queries a workspace namespace for the most similar vectors to a query embedding.
  *
  * @param workspaceId - Pinecone namespace to search
- * @param vector - Query embedding (1536 dimensions)
+ * @param vector - Query embedding (must match EMBEDDING_DIMENSIONS)
  * @param topK - Maximum number of matches to return
  * @returns Pinecone match objects with scores and metadata
  *
