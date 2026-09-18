@@ -8,6 +8,7 @@ import {
   importWebsite,
   importYoutube,
   listSources,
+  reprocessSource,
   uploadPdf,
 } from "../controllers/source.controller.js";
 import { uploadSinglePdf } from "../middleware/upload.middleware.js";
@@ -27,4 +28,5 @@ sourceRoutes.get("/", asyncHandler(listSources));
 sourceRoutes.post("/", asyncHandler(createSource));
 sourceRoutes.post("/bulk-delete", asyncHandler(bulkDeleteSources));
 sourceRoutes.get("/:sourceId", asyncHandler(getSource));
+sourceRoutes.post("/:sourceId/reprocess", asyncHandler(reprocessSource));
 sourceRoutes.delete("/:sourceId", asyncHandler(deleteSource));

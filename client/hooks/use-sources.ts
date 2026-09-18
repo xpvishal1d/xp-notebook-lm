@@ -120,6 +120,19 @@ export function useImportYoutubeSource(workspaceId: string) {
   });
 }
 
+export function useReprocessSource(workspaceId: string) {
+  const invalidate = useInvalidateSources(workspaceId);
+
+  return useMutation({
+    mutationFn: (sourceId: string) =>
+      apiFetch<Source>(
+        `/api/workspaces/${workspaceId}/sources/${sourceId}/reprocess`,
+        { method: "POST" },
+      ),
+    onSuccess: invalidate,
+  });
+}
+
 export function useDeleteSource(workspaceId: string) {
   const invalidate = useInvalidateSources(workspaceId);
 

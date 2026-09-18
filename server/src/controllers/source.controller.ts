@@ -18,6 +18,7 @@ import {
     importWebsiteSource,
     importYoutubeSource,
     listSourcesForWorkspace,
+    reprocessSourceForWorkspace,
     uploadPdfSource,
 } from "../services/source.services.js";
 
@@ -126,6 +127,16 @@ export async function deleteSource(req: Request, res: Response) {
         req.session.user.id,
     );
     res.status(204).send();
+}
+
+export async function reprocessSource(req: Request, res: Response) {
+    const { workspaceId, sourceId } = parseSourceParams(req.params);
+    const source = await reprocessSourceForWorkspace(
+        workspaceId,
+        sourceId,
+        req.session.user.id,
+    );
+    res.status(202).json(source);
 }
 
 export async function bulkDeleteSources(req: Request, res: Response) {

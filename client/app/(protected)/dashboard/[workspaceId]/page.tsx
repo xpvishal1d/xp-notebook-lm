@@ -16,12 +16,17 @@ import {
   RiMarkdownLine,
   RiMore2Line,
   RiPencilLine,
+  RiRefreshLine,
   RiSearchLine,
   RiYoutubeLine,
 } from "@remixicon/react";
 
 import type { Source, SourceStatus, SourceType } from "@/lib/api";
-import { useDeleteSource, useSources } from "@/hooks/use-sources";
+import {
+  useDeleteSource,
+  useReprocessSource,
+  useSources,
+} from "@/hooks/use-sources";
 import { useWorkspace } from "@/hooks/use-workspaces";
 import { AddSourceDialog } from "@/components/sources/add-source-dialog";
 import { DeleteWorkspaceDialog } from "@/components/workspaces/delete-workspace-dialog";
@@ -97,12 +102,18 @@ function sourceSubtitle(source: Source) {
 function SourceRow({
   source,
   onDeleteClick,
+  onRetryClick,
+  isRetrying,
 }: {
   source: Source;
   onDeleteClick: (source: Source) => void;
+  onRetryClick: (source: Source) => void;
+  isRetrying: boolean;
 }) {
   const { Icon } = SOURCE_TYPE_META[source.type];
   const status = STATUS_META[source.status];
+  // Allow retrying a failed source, or one stuck in PENDING (worker never ran).
+  const canRetry = source.status === "FAILED" || source.status === "PENDING";
 
   return (
     <li className="flex items-center gap-3 rounded-xl border bg-card p-3">
@@ -119,6 +130,21 @@ function SourceRow({
         {source.status === "PROCESSING" ? <Spinner /> : null}
         {status.label}
       </Badge>
+      {canRetry ? (
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={`Retry processing ${source.title}`}
+          disabled={isRetrying}
+          onClick={() => onRetryClick(source)}
+        >
+          {isRetrying ? (
+            <Spinner />
+          ) : (
+            <RiRefreshLine className="text-muted-foreground" />
+          )}
+        </Button>
+      ) : null}
       <Button
         variant="ghost"
         size="icon-sm"
@@ -259,6 +285,15 @@ export default function WorkspaceDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteWorkspaceOpen, setDeleteWorkspaceOpen] = useState(false);
   const [sourceToDelete, setSourceToDelete] = useState<Source | null>(null);
+  const reprocessSource = useReprocessSource(workspaceId);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
+
+  const handleRetry = (source: Source) => {
+    setRetryingId(source.id);
+    reprocessSource.mutate(source.id, {
+      onSettled: () => setRetryingId(null),
+    });
+  };
 
   // Active tab is shared UI state (persisted across reloads).
   const workspaceTab = useUIStore((s) => s.workspaceTab);
@@ -398,6 +433,8 @@ export default function WorkspaceDetailPage() {
                 key={source.id}
                 source={source}
                 onDeleteClick={setSourceToDelete}
+                onRetryClick={handleRetry}
+                isRetrying={retryingId === source.id}
               />
             ))}
           </ul>
